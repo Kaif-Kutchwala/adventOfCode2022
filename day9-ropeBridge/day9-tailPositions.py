@@ -1,0 +1,50 @@
+file = open("day9-input.txt", "r")
+commands = file.read().splitlines()
+
+
+DirectionHorizontal = {"L": -1, "U": 0, "R": 1, "D": 0}
+DirectionVertical = {"L": 0, "U": 1, "R": 0, "D": -1}
+
+
+def calculate_move(direction:str):
+    return (DirectionHorizontal[direction], DirectionVertical[direction])
+
+head_position = (0,0)
+tail_position = (0,0)
+tail_covered_positions = set()
+
+def calculate_tail_position(head_position, tail_position):
+    horizontal_distance = head_position[0] - tail_position[0]
+    vertical_distance = head_position[1] - tail_position[1]
+
+    if abs(horizontal_distance) >=2 and abs(vertical_distance) >=2:
+        new_tail_x = head_position[0] - 1 if head_position[0] > tail_position[0] else head_position[0] + 1
+        new_tail_y = head_position[1] - 1 if head_position[1] > tail_position[1] else head_position[1] + 1
+        tail_position = (new_tail_x, new_tail_y)
+        
+    elif abs(horizontal_distance) >=2:
+        new_tail_x = head_position[0] - 1 if head_position[0] > tail_position[0] else head_position[0] + 1
+        tail_position = (new_tail_x, head_position[1])
+        
+    elif abs(vertical_distance) >=2:
+        new_tail_y = head_position[1] - 1 if head_position[1] > tail_position[1] else head_position[1] + 1
+        tail_position = (head_position[0], new_tail_y)
+    return tail_position
+
+for command in commands:
+    direction, amount = command.split(" ")
+    amount = int(amount)
+
+    for _ in range(amount):
+        tail_covered_positions.add(tail_position)
+
+        head_move = calculate_move(direction)
+        head_position = (head_position[0] + head_move[0], head_position[1] + head_move[1])
+        tail_position = calculate_tail_position(head_position, tail_position)
+        
+        tail_covered_positions.add(tail_position)
+        
+
+print(len(tail_covered_positions))
+        
+
